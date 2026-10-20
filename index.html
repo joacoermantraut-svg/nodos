@@ -107,6 +107,7 @@ form .btn{width:100%}
 .alias code{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;letter-spacing:.02em;font-size:1.2rem;user-select:all;overflow-wrap:anywhere;min-width:0}
 .copy{font:inherit;font-size:.9rem;background:var(--ink);color:#000;border:0;padding:7px 12px;cursor:pointer;flex:0 0 auto}
 .alias div{display:grid;gap:2px;min-width:0}
+.alias .titular{color:var(--ink);font-size:.95rem;margin-top:2px}
 @media(max-width:420px){.dos{grid-template-columns:1fr}}
 
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}#p1 .logo,#p1 .btn{opacity:1;filter:none;transform:none}}
@@ -167,7 +168,7 @@ form .btn{width:100%}
         </div>
       </div>
       <div class="total"><span>Total</span><b id="total"></b></div>
-      <div class="alias" id="aliasBox"><div><span>Alias para transferir</span><code id="alias">NODOS.TRIGGER</code></div><button class="copy" type="button" id="copiar">Copiar</button></div>
+      <div class="alias" id="aliasBox"><div><span>Alias para transferir</span><code id="alias">NODOS.TRIGGER</code><span class="titular">A nombre de Bautista Platz</span></div><button class="copy" type="button" id="copiar">Copiar</button></div>
       <p class="nota" id="pago"></p>
       <p class="err" id="err" hidden></p>
       <a class="btn" id="wa" href="https://wa.me/5492234258381" target="_blank" rel="noopener"></a>
