@@ -21,7 +21,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:18p
 :focus-visible{outline:2px solid var(--yel);outline-offset:4px}
 @keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-.stripe{position:fixed;left:max(20px,calc(env(safe-area-inset-left,0px) + 16px));top:calc(env(safe-area-inset-top,0px) + 22px);display:inline-flex;height:11px;z-index:2}
+.stripe{position:fixed;left:max(20px,calc(env(safe-area-inset-left,0px) + 16px));top:calc(env(safe-area-inset-top,0px) + 22px);display:inline-flex;height:11px;z-index:2;padding:8px;margin:-8px;box-sizing:content-box;transition:transform .3s var(--ease)}
+.stripe:hover{transform:translateX(3px)}
 .stripe i{display:block;width:11px;height:100%;transform:skewX(-28deg)}
 .stripe i+i{margin-left:-1px}
 
@@ -100,7 +101,7 @@ form .btn{width:100%}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}#p1 .logo,#p1 .btn{opacity:1;filter:none;transform:none}}
 </style>
 
-<span class="stripe" aria-hidden="true"><i style="background:var(--mag)"></i><i style="background:var(--blu)"></i><i style="background:var(--cor)"></i><i style="background:var(--yel)"></i></span>
+<a class="stripe" href="https://www.triggercreators.com" aria-label="Trigger Creators"><i style="background:var(--mag)"></i><i style="background:var(--blu)"></i><i style="background:var(--cor)"></i><i style="background:var(--yel)"></i></a>
 
 <!-- 1 · portada -->
 <main class="pantalla" id="p1">
