@@ -1,0 +1,257 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>NODOS Estreno</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+@font-face{font-family:'Coolvetica';src:url('fonts/coolvetica.ttf?v=2') format('truetype');font-weight:400;font-display:block}
+
+/* Layout: tres pantallas negras en el mismo lugar. 1 logo + botón · 2 fecha + line up · 3 formulario */
+:root{
+  --bg:#000; --ink:#fff; --dim:rgba(255,255,255,.6); --line:rgba(255,255,255,.9); --soft:rgba(255,255,255,.35); --err:#F97258;
+  --mag:#EA37F4; --blu:#2682DD; --cor:#F97258; --yel:#FCC008;
+  --font:'Coolvetica','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:18px;line-height:1.2;-webkit-font-smoothing:antialiased;margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+:focus-visible{outline:2px solid var(--yel);outline-offset:4px}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.stripe{position:fixed;left:max(20px,calc(env(safe-area-inset-left,0px) + 16px));top:calc(env(safe-area-inset-top,0px) + 22px);display:inline-flex;height:11px;z-index:2}
+.stripe i{display:block;width:11px;height:100%;transform:skewX(-28deg)}
+.stripe i+i{margin-left:-1px}
+
+.pantalla{min-height:100%;display:grid;place-items:center;padding-block:72px 48px;animation:in .6s var(--ease) both}
+.centro{width:min(560px,100%);display:grid;justify-items:center;gap:clamp(26px,5vh,40px)}
+
+/* 1 · portada */
+.logo{width:min(460px,82vw)}
+#p1 .logo{opacity:0;filter:blur(16px);transform:scale(.95);animation:aparece 2s var(--ease) .3s forwards}
+@keyframes aparece{60%{filter:blur(0)}to{opacity:1;filter:blur(0);transform:scale(1)}}
+#p1 .btn{opacity:0;animation:in .8s var(--ease) 1.9s forwards}
+.logo--chico{width:min(200px,50vw)}
+
+/* caja con asterisco, como en el flyer */
+.box{position:relative;border:1.5px solid var(--line);padding:.3em .8em .34em 1em;display:inline-block}
+.box::before{content:"";position:absolute;left:-.46em;top:50%;width:.85em;height:.8em;transform:translateY(-50%);background:url('img/ast-w.png') center/contain no-repeat}
+
+.btn{font-family:var(--font);font-size:1.15rem;color:#000;background:var(--ink);border:1.5px solid var(--ink);padding:.7em 1.6em .72em;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;transition:background .25s,color .25s}
+.btn:hover{background:transparent;color:var(--ink)}
+.atras{background:none;border:0;color:var(--dim);font:inherit;font-size:.95rem;cursor:pointer;padding:6px;text-decoration:underline;text-underline-offset:3px}
+
+/* 2 · info + line up */
+.info{display:grid;justify-items:center;gap:10px;text-align:center}
+.info .box{font-size:clamp(1.1rem,3.6vw,1.45rem)}
+.info .box:first-child{font-size:clamp(1.5rem,5vw,2rem)}
+.info small{display:block;color:var(--dim);font-size:.62em;margin-top:.15em}
+.lineup{width:100%;display:grid;gap:8px}
+.lineup h2{font-weight:400;font-size:1rem;color:var(--dim);margin:0 0 4px;text-align:center}
+.fila{display:grid;grid-template-columns:78px 1fr;gap:10px;align-items:stretch}
+.fila .box{display:flex;align-items:center;font-size:1.02rem;line-height:1.12;min-width:0}
+.fila .hora{justify-content:center;font-variant-numeric:tabular-nums}
+.fila .que{padding-left:.8em}
+.fila .que::before{display:none}
+.fila small{color:var(--dim)}
+.fila--film .que{background:var(--ink);color:#000}
+.precio{margin:0;color:var(--dim);font-size:.95rem;text-align:center}
+.acciones{display:grid;justify-items:center;gap:8px}
+
+/* 3 · formulario */
+form{width:100%;display:grid;gap:14px}
+.f{display:grid;gap:6px;min-width:0}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{font-size:.9rem;color:var(--dim)}
+input{font:inherit;font-size:1.05rem;color:var(--ink);background:#000;border:1.5px solid var(--soft);padding:12px 13px;width:100%;border-radius:0}
+input:focus{border-color:var(--ink);outline:none}
+input::placeholder{color:rgba(255,255,255,.3)}
+input[aria-invalid="true"]{border-color:var(--err)}
+.qty{display:flex}
+.qty button{width:48px;font:inherit;font-size:1.3rem;background:#000;color:var(--ink);border:1.5px solid var(--soft);cursor:pointer}
+.qty input{text-align:center;border-inline:0;font-variant-numeric:tabular-nums}
+.total{display:flex;justify-content:space-between;align-items:baseline;border-top:1.5px dashed var(--soft);padding-top:14px;margin-top:4px}
+.total span{color:var(--dim)}
+.total b{font-weight:400;font-size:2rem;font-variant-numeric:tabular-nums}
+.nota{margin:0;color:var(--dim);font-size:.92rem;line-height:1.3}
+.nota code{font-family:inherit;color:var(--ink);user-select:all}
+.err{margin:0;color:var(--err);font-size:.95rem}
+form .btn{width:100%}
+.medio{width:100%;display:grid;gap:14px;text-align:center}
+.medio h2{font-weight:400;font-size:clamp(1.5rem,5vw,2rem);margin:0 0 6px}
+.opciones{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.opcion{font:inherit;font-size:1.25rem;color:var(--ink);background:#000;border:1.5px solid var(--line);padding:1em .6em;cursor:pointer;display:grid;gap:6px;transition:background .25s,color .25s}
+.opcion small{font-size:.72em;color:var(--dim)}
+.opcion:hover{background:var(--ink);color:#000}
+.opcion:hover small{color:rgba(0,0,0,.6)}
+.elegido{display:flex;align-items:baseline;gap:8px;color:var(--dim);font-size:.95rem;margin:0}
+.elegido button{margin-left:auto}
+.elegido b{font-weight:400;color:var(--ink)}
+.elegido button{background:none;border:0;color:var(--dim);font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:0}
+.alias{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1.5px solid var(--line);padding:12px 14px}
+.alias span{color:var(--dim);font-size:.9rem}
+.alias code{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;letter-spacing:.02em;font-size:1.2rem;user-select:all;overflow-wrap:anywhere;min-width:0}
+.copy{font:inherit;font-size:.9rem;background:var(--ink);color:#000;border:0;padding:7px 12px;cursor:pointer;flex:0 0 auto}
+.alias div{display:grid;gap:2px;min-width:0}
+@media(max-width:420px){.dos{grid-template-columns:1fr}}
+
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}#p1 .logo,#p1 .btn{opacity:1;filter:none;transform:none}}
+</style>
+
+<span class="stripe" aria-hidden="true"><i style="background:var(--mag)"></i><i style="background:var(--blu)"></i><i style="background:var(--cor)"></i><i style="background:var(--yel)"></i></span>
+
+<!-- 1 · portada -->
+<main class="pantalla" id="p1">
+  <div class="centro">
+    <img class="logo" src="img/logo-w.png" alt="nodos*, a Trigger Creators film.">
+    <button class="btn" type="button" data-ir="p2">Sacar entrada</button>
+  </div>
+</main>
+
+<!-- 2 · info + line up -->
+<main class="pantalla" id="p2" hidden>
+  <div class="centro">
+    <img class="logo logo--chico" src="img/logo-w.png" alt="nodos*">
+    <div class="info">
+      <span class="box">Jueves 05.11.26</span>
+      <span class="box">Desde las 19:00 hs</span>
+      <span class="box">Hard Rock, Mar del Plata.<small>Martín Miguel de Güemes 3098</small></span>
+    </div>
+    <div class="lineup">
+      <h2>Line up</h2>
+      <div class="fila"><span class="box hora">19:00</span><span class="box que"><span>Apertura. DJ Vinyl Set <small>(Manuel Alvarez)</small>, tapeo y bebidas.</span></span></div>
+      <div class="fila"><span class="box hora">20:30</span><span class="box que">Sorteos en vivo con los sponsors.</span></div>
+      <div class="fila fila--film"><span class="box hora">21:00</span><span class="box que">Proyección de nodos*.</span></div>
+      <div class="fila"><span class="box hora">22:00</span><span class="box que"><span>Música en vivo <small>(Aurelio y Los Casi Estatua)</small>.</span></span></div>
+      <div class="fila"><span class="box hora">23:00</span><span class="box que"><span>DJ Vinyl Set <small>(Manuel Alvarez)</small>.</span></span></div>
+    </div>
+    <div class="acciones">
+      <button class="btn" type="button" data-ir="p3">Quiero mi entrada</button>
+      <p class="precio">$20.000 · incluye comida, una Corona y sorpresas toda la noche</p>
+    </div>
+  </div>
+</main>
+
+<!-- 3 · formulario -->
+<main class="pantalla" id="p3" hidden>
+  <div class="centro">
+    <img class="logo logo--chico" src="img/logo-w.png" alt="nodos*">
+    <div class="medio" id="medio">
+      <h2>¿Cómo querés abonar?</h2>
+      <div class="opciones">
+        <button class="opcion" type="button" data-medio="Transf">Transferencia<small>al alias NODOS.TRIGGER</small></button>
+        <button class="opcion" type="button" data-medio="Efectivo">Efectivo<small>coordinamos por WhatsApp</small></button>
+      </div>
+    </div>
+    <form id="form" novalidate hidden>
+      <p class="elegido">Pago: <b id="medioTxt"></b><button type="button" id="cambiar">Cambiar</button></p>
+      <div class="f"><label for="nombre">Nombre y apellido</label><input id="nombre" autocomplete="name" placeholder="Como figura en tu DNI"></div>
+      <div class="dos">
+        <div class="f"><label for="tel">Teléfono</label><input id="tel" type="tel" autocomplete="tel" placeholder="223 555 0000"></div>
+        <div class="f"><label for="cant">Entradas</label>
+          <div class="qty"><button type="button" id="menos" aria-label="Una entrada menos">−</button><input id="cant" type="number" min="1" max="10" value="1" inputmode="numeric"><button type="button" id="mas" aria-label="Una entrada más">+</button></div>
+        </div>
+      </div>
+      <div class="total"><span>Total</span><b id="total"></b></div>
+      <div class="alias" id="aliasBox"><div><span>Alias para transferir</span><code id="alias">NODOS.TRIGGER</code></div><button class="copy" type="button" id="copiar">Copiar</button></div>
+      <p class="nota" id="pago"></p>
+      <p class="err" id="err" hidden></p>
+      <a class="btn" id="wa" href="https://wa.me/5492234258381" target="_blank" rel="noopener"></a>
+      <p class="nota">Te confirmamos la entrada por WhatsApp al 223 425-8381.</p>
+    </form>
+    <button class="atras" type="button" data-ir="p2">Volver</button>
+  </div>
+</main>
+
+<script>
+const EVENTO = {
+  precio: 20000,
+  whatsapp: '5492234258381',
+  alias: 'NODOS.TRIGGER',
+  planilla: null     // URL de la app web de Apps Script (termina en /exec)
+};
+
+const $ = s => document.querySelector(s);
+const ars = n => '$' + n.toLocaleString('es-AR');
+
+// navegación entre pantallas
+document.querySelectorAll('[data-ir]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.pantalla').forEach(p => { p.hidden = p.id !== b.dataset.ir; });
+  scrollTo(0, 0);
+  if (b.dataset.ir === 'p3') elegir(null);
+}));
+
+// medio de pago: "Transf" o "Efectivo" (los mismos valores que usa la planilla)
+let medio = null;
+const TEXTOS = {
+  Transf: { nombre: 'Transferencia', boton: 'Enviar comprobante por WhatsApp', nota: 'Transferí el total y mandanos el comprobante por WhatsApp.' },
+  Efectivo: { nombre: 'Efectivo', boton: 'Coordinar pago por WhatsApp', nota: 'Completá tus datos y escribinos por WhatsApp para coordinar el pago en efectivo.' }
+};
+const elegir = m => {
+  medio = m;
+  $('#medio').hidden = !!m;
+  $('#form').hidden = !m;
+  if (!m) return;
+  const t = TEXTOS[m];
+  $('#medioTxt').textContent = t.nombre;
+  $('#aliasBox').hidden = m !== 'Transf';
+  $('#pago').textContent = t.nota;
+  $('#wa').textContent = t.boton;
+  datos();
+  $('#nombre').focus();
+};
+document.querySelectorAll('[data-medio]').forEach(b => b.addEventListener('click', () => elegir(b.dataset.medio)));
+$('#cambiar').onclick = () => elegir(null);
+
+$('#copiar').addEventListener('click', () => {
+  const b = $('#copiar');
+  navigator.clipboard.writeText(EVENTO.alias).then(() => {
+    b.textContent = 'Copiado'; setTimeout(() => b.textContent = 'Copiar', 1600);
+  }).catch(() => {
+    const r = document.createRange(); r.selectNodeContents($('#alias'));
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+  });
+});
+
+const cant = $('#cant');
+const clamp = n => Math.min(10, Math.max(1, parseInt(n, 10) || 1));
+
+const datos = () => {
+  const nombre = $('#nombre').value.trim(), tel = $('#tel').value.trim(), n = clamp(cant.value);
+  const ent = n === 1 ? 'entrada' : 'entradas';
+  $('#total').textContent = ars(n * EVENTO.precio);
+  const cierre = medio === 'Efectivo' ? 'Pago en efectivo, ¿cómo coordinamos?' : `Te mando el comprobante de la transferencia a ${EVENTO.alias}.`;
+  const msg = `Hola! Quiero ${n} ${ent} para NODOS (jueves 05.11, Hard Rock).\n\nNombre: ${nombre}\nTeléfono: ${tel}\nTotal: ${ars(n * EVENTO.precio)}\n\n${cierre}`;
+  $('#wa').href = `https://wa.me/${EVENTO.whatsapp}?text=${encodeURIComponent(msg)}`;
+  return { nombre, tel, n };
+};
+['nombre', 'tel', 'cant'].forEach(id => $('#' + id).addEventListener('input', e => { e.target.removeAttribute('aria-invalid'); datos(); }));
+$('#menos').onclick = () => { cant.value = clamp(clamp(cant.value) - 1); datos(); };
+$('#mas').onclick = () => { cant.value = clamp(clamp(cant.value) + 1); datos(); };
+cant.addEventListener('change', () => { cant.value = clamp(cant.value); datos(); });
+datos();
+
+// guarda la compra en la planilla (Pago "No" hasta que llegue el comprobante)
+const registrar = d => {
+  if (!EVENTO.planilla) return;
+  const body = new URLSearchParams({ nombre: d.nombre, telefono: d.tel, cantidad: d.n, tipo: medio });
+  fetch(EVENTO.planilla, { method: 'POST', mode: 'no-cors', keepalive: true, body }).catch(() => {});
+};
+
+// el link abre WhatsApp en otra pestaña; si faltan datos, lo frena y avisa
+$('#wa').addEventListener('click', e => {
+  const d = datos();
+  const checks = [
+    [$('#nombre'), d.nombre.split(/\s+/).length >= 2, 'Escribí nombre y apellido.'],
+    [$('#tel'), d.tel.replace(/\D/g, '').length >= 8, 'Revisá el teléfono.']
+  ];
+  checks.forEach(([el, ok]) => el.setAttribute('aria-invalid', ok ? 'false' : 'true'));
+  const mal = checks.find(([, ok]) => !ok);
+  $('#err').hidden = !mal;
+  if (mal) { e.preventDefault(); $('#err').textContent = mal[2]; mal[0].focus(); return; }
+  registrar(d);
+});
+$('#form').addEventListener('submit', e => { e.preventDefault(); $('#wa').click(); });
+</script>
