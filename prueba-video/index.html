@@ -44,7 +44,15 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:18p
 /* 1 · portada */
 .logo{width:min(460px,82vw)}
 #p1{position:fixed;inset:0;display:block;padding:0;animation:none;background:#000;z-index:1}
-#p1 video{width:100%;height:100%;object-fit:cover;display:block}
+#p1 .marco{position:relative;width:100%;height:100%}
+#p1 .marco video{width:100%;height:100%;object-fit:cover;display:block}
+#p1 .fondo{display:none}
+/* pantallas anchas: el video vertical entero y nítido al centro, con su propia imagen desenfocada de fondo */
+@media (min-aspect-ratio:1/1){
+  #p1 .marco{width:auto;height:100%;aspect-ratio:9/16;max-width:100%;margin:0 auto;box-shadow:0 0 80px rgba(0,0,0,.6)}
+  #p1 .fondo{display:block;position:absolute;inset:0;overflow:hidden}
+  #p1 .fondo video{width:100%;height:100%;object-fit:cover;filter:blur(36px) brightness(.4) saturate(1.1);transform:scale(1.15)}
+}
 .cta-video{position:absolute;left:0;right:0;bottom:calc(13vh + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;opacity:0;transform:translateY(12px);transition:opacity .8s var(--ease),transform .8s var(--ease);pointer-events:none}
 .cta-video.on{opacity:1;transform:none;pointer-events:auto}
 .sonido{position:absolute;right:max(20px,calc(env(safe-area-inset-right,0px) + 16px));top:calc(env(safe-area-inset-top,0px) + 14px);z-index:3;font:inherit;font-size:.85rem;color:var(--ink);background:rgba(0,0,0,.35);border:1.5px solid var(--soft);padding:6px 12px;cursor:pointer}
@@ -130,11 +138,14 @@ form .btn{width:100%}
 <!-- 1 · portada -->
 <!-- 1 · portada con el video: el botón aparece cuando el personaje sale caminando -->
 <main class="pantalla" id="p1">
-  <video id="vid" muted playsinline preload="auto" aria-label="nodos*, a Trigger Creators film."></video>
-  <button class="sonido" id="sonido" type="button" aria-pressed="false">Sonido</button>
-  <div class="cta-video" id="ctaVideo">
-    <button class="btn" type="button" data-ir="p2">Sacar entrada</button>
+  <div class="fondo" aria-hidden="true"><video id="vidFondo" muted playsinline preload="auto"></video></div>
+  <div class="marco">
+    <video id="vid" muted playsinline preload="auto" aria-label="nodos*, a Trigger Creators film."></video>
+    <div class="cta-video" id="ctaVideo">
+      <button class="btn" type="button" data-ir="p2">Sacar entrada</button>
+    </div>
   </div>
+  <button class="sonido" id="sonido" type="button" aria-pressed="false">Sonido</button>
 </main>
 
 <!-- 2 · info + line up -->
@@ -227,9 +238,19 @@ const ars = n => '$' + n.toLocaleString('es-AR');
 // portada con video: vertical en celular, horizontal en pantallas anchas
 const vid = $('#vid');
 const SALE_CAMINANDO = 18.6;   // segundo en que el personaje sale de cuadro
-const vertical = matchMedia('(max-aspect-ratio: 1/1)').matches;
-vid.src = vertical ? 'video/nodos-vertical.mp4' : 'video/nodos-horizontal.mp4';
-vid.poster = vertical ? 'video/final-vertical.jpg' : 'video/final-horizontal.jpg';
+vid.src = 'video/nodos-vertical.mp4';
+vid.poster = 'video/final-vertical.jpg';
+// en pantallas anchas, la misma toma desenfocada de fondo, acompañando al video principal
+const fondo = $('#vidFondo');
+if (matchMedia('(min-aspect-ratio: 1/1)').matches) {
+  fondo.src = vid.src;
+  fondo.poster = vid.poster;
+  vid.addEventListener('play', () => fondo.play().catch(() => {}));
+  vid.addEventListener('pause', () => fondo.pause());
+  vid.addEventListener('timeupdate', () => {
+    if (Math.abs(fondo.currentTime - vid.currentTime) > 0.25) fondo.currentTime = vid.currentTime;
+  });
+}
 const mostrarBoton = () => $('#ctaVideo').classList.add('on');
 vid.addEventListener('timeupdate', () => { if (vid.currentTime >= SALE_CAMINANDO) mostrarBoton(); });
 vid.addEventListener('ended', mostrarBoton);
@@ -245,7 +266,7 @@ $('#sonido').onclick = () => {
 // navegación entre pantallas
 document.querySelectorAll('[data-ir]').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.pantalla').forEach(p => { p.hidden = p.id !== b.dataset.ir; });
-  if (b.dataset.ir !== 'p1') vid.pause();
+  if (b.dataset.ir !== 'p1') { vid.pause(); fondo.pause(); }
   scrollTo(0, 0);
   if (b.dataset.ir === 'p3') elegir(null);
 }));
