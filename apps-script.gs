@@ -54,3 +54,35 @@ function crearInvitaciones() {
   hoja.getRange('D4').setFormula('=B3+D3');
   hoja.getRange('D3:D4').setFontWeight('bold').setHorizontalAlignment('right');
 }
+
+// Arma "Invitaciones" en dos tablas lado a lado, cada una con su subtotal, y el total de regaladas
+// de "Entradas" suma las dos. Solo reorganiza si la hoja todavía no tiene invitados anotados.
+function armarInvitacionesEnDosTablas() {
+  const ss = SpreadsheetApp.getActive();
+  const inv = ss.getSheetByName('Invitaciones');
+  const anotados = inv.getRange('A2:E' + inv.getMaxRows()).getValues().flat().filter(v => v !== '').length;
+  if (anotados) throw new Error('La hoja Invitaciones ya tiene datos: no la reorganizo para no perder nada.');
+
+  inv.getRange(1, 1, inv.getMaxRows(), inv.getMaxColumns()).clear().clearDataValidations();
+  inv.setFrozenRows(0);
+  const tablas = [
+    { col: 1, titulo: 'INFLUENCERS / INVITADOS ESPECIALES' },
+    { col: 6, titulo: 'CLIENTES' },
+  ];
+  tablas.forEach(({ col, titulo }) => {
+    const L = c => String.fromCharCode(64 + col + c);           // letra de columna relativa a la tabla
+    inv.getRange(1, col).setValue(titulo).setFontWeight('bold').setFontSize(12);
+    inv.getRange(2, col, 1, 2).setValues([['Subtotal', '']]).setFontWeight('bold');
+    inv.getRange(2, col + 2).setFormula('=SUM(' + L(2) + '4:' + L(2) + ')').setFontWeight('bold');
+    inv.getRange(3, col, 1, 4).setValues([['Nombre', 'Teléfono', 'Cantidad', 'Notas']])
+      .setFontWeight('bold').setBackground('#f1f1f1');
+    inv.getRange(4, col + 2, 497, 1).setDataValidation(
+      SpreadsheetApp.newDataValidation().requireNumberGreaterThanOrEqualTo(1).setAllowInvalid(false).build());
+    inv.setColumnWidth(col, 220); inv.setColumnWidth(col + 1, 130);
+    inv.setColumnWidth(col + 2, 80); inv.setColumnWidth(col + 3, 200);
+  });
+  inv.setColumnWidth(5, 30);                                     // separación entre las dos tablas
+  inv.setFrozenRows(3);
+
+  ss.getSheetByName(HOJA).getRange('D3').setFormula('=SUM(Invitaciones!C4:C)+SUM(Invitaciones!H4:H)');
+}
