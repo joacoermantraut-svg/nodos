@@ -86,3 +86,46 @@ function armarInvitacionesEnDosTablas() {
 
   ss.getSheetByName(HOJA).getRange('D3').setFormula('=SUM(Invitaciones!C4:C)+SUM(Invitaciones!H4:H)');
 }
+
+// Invitaciones con casilla "Entregada": cada tabla muestra cuántas anotaste (estimado) y cuántas ya
+// entregaste; "Regaladas entregadas" de la hoja Entradas suma solo las tildadas. Conserva lo ya anotado.
+// Las fórmulas van sin separadores (SUMPRODUCT con *) porque la planilla está en configuración regional en español.
+function invitacionesConEntregada() {
+  const ss = SpreadsheetApp.getActive();
+  const inv = ss.getSheetByName('Invitaciones');
+  const leer = rango => inv.getRange(rango).getValues()
+    .filter(r => r.some(v => v !== '' && v !== false))
+    .map(r => [r[0], r[1], r[2], false, r[3]]);
+  // lo anotado con el formato anterior (Nombre | Teléfono | Cantidad | Notas, desde la fila 4)
+  const previos = [leer('A4:D' + inv.getMaxRows()), leer('F4:I' + inv.getMaxRows())];
+
+  inv.setFrozenRows(0);
+  inv.getRange(1, 1, inv.getMaxRows(), inv.getMaxColumns()).clear().clearDataValidations();
+  const tablas = [
+    { col: 1, titulo: 'INFLUENCERS / INVITADOS ESPECIALES' },
+    { col: 7, titulo: 'CLIENTES' },
+  ];
+  tablas.forEach(({ col, titulo }, i) => {
+    const L = c => String.fromCharCode(64 + col + c);            // letra de columna relativa a la tabla
+    const cant = L(2), ent = L(3);
+    inv.getRange(1, col).setValue(titulo).setFontWeight('bold').setFontSize(12);
+    inv.getRange(2, col).setValue('Anotadas (estimado)').setFontWeight('bold');
+    inv.getRange(2, col + 2).setFormula('=SUM(' + cant + '5:' + cant + ')').setFontWeight('bold');
+    inv.getRange(3, col).setValue('Entregadas').setFontWeight('bold');
+    inv.getRange(3, col + 2).setFormula('=SUMPRODUCT(' + ent + '5:' + ent + '*' + cant + '5:' + cant + ')').setFontWeight('bold');
+    inv.getRange(4, col, 1, 5).setValues([['Nombre', 'Teléfono', 'Cantidad', 'Entregada', 'Notas']])
+      .setFontWeight('bold').setBackground('#f1f1f1');
+    inv.getRange(5, col + 2, 496, 1).setDataValidation(
+      SpreadsheetApp.newDataValidation().requireNumberGreaterThanOrEqualTo(1).setAllowInvalid(false).build());
+    inv.getRange(5, col + 3, 496, 1).insertCheckboxes();
+    if (previos[i].length) inv.getRange(5, col, previos[i].length, 5).setValues(previos[i]);
+    inv.setColumnWidth(col, 220); inv.setColumnWidth(col + 1, 130);
+    inv.setColumnWidth(col + 2, 80); inv.setColumnWidth(col + 3, 85); inv.setColumnWidth(col + 4, 200);
+  });
+  inv.setColumnWidth(6, 30);                                      // separación entre las dos tablas
+  inv.setFrozenRows(4);
+
+  const hoja = ss.getSheetByName(HOJA);
+  hoja.getRange('C3').setValue('Regaladas entregadas');
+  hoja.getRange('D3').setFormula('=SUMPRODUCT(Invitaciones!D5:D*Invitaciones!C5:C)+SUMPRODUCT(Invitaciones!J5:J*Invitaciones!I5:I)');
+}
