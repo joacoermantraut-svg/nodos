@@ -47,9 +47,10 @@ function crearInvitaciones() {
     inv.setColumnWidth(4, 110); inv.setColumnWidth(5, 260);
   }
 
-  // totales en D3:E4 de "Entradas" (zona libre: no toca la tabla de ventas ni lo que escribe la web)
+  // totales en C3:D4 de "Entradas" (zona libre: no toca la tabla de ventas ni lo que escribe la web)
   const hoja = ss.getSheetByName(HOJA);
-  hoja.getRange('D3:D4').setValues([['Entradas regaladas'], ['Total entregadas (vendidas + regaladas)']]).setFontWeight('bold');
-  hoja.getRange('E3').setFormula("=SUM(Invitaciones!C2:C)");
-  hoja.getRange('E4').setFormula('=B3+E3');
+  hoja.getRange('C3:C4').setValues([['Entradas regaladas'], ['Total entregadas']]).setFontWeight('bold');
+  hoja.getRange('D3').setFormula("=SUM(Invitaciones!C2:C)");
+  hoja.getRange('D4').setFormula('=B3+D3');
+  hoja.getRange('D3:D4').setFontWeight('bold').setHorizontalAlignment('right');
 }
