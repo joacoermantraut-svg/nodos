@@ -28,3 +28,28 @@ function doPost(e) {
   }
   return ContentService.createTextOutput('ok');
 }
+
+// Correr UNA vez desde el editor (botón Ejecutar): crea la hoja "Invitaciones" para anotar las
+// entradas regaladas y suma dos totales arriba de la hoja "Entradas", al lado de los que ya existen.
+function crearInvitaciones() {
+  const ss = SpreadsheetApp.getActive();
+  let inv = ss.getSheetByName('Invitaciones');
+  if (!inv) {
+    inv = ss.insertSheet('Invitaciones');
+    inv.getRange('A1:E1').setValues([['Nombre', 'Teléfono', 'Cantidad', 'Para', 'Notas']])
+      .setFontWeight('bold').setBackground('#f1f1f1');
+    inv.setFrozenRows(1);
+    inv.getRange('C2:C500').setDataValidation(
+      SpreadsheetApp.newDataValidation().requireNumberGreaterThanOrEqualTo(1).setAllowInvalid(false).build());
+    inv.getRange('D2:D500').setDataValidation(
+      SpreadsheetApp.newDataValidation().requireValueInList(['Cliente', 'Amigo', 'Otro'], true).build());
+    inv.setColumnWidth(1, 220); inv.setColumnWidth(2, 140); inv.setColumnWidth(3, 90);
+    inv.setColumnWidth(4, 110); inv.setColumnWidth(5, 260);
+  }
+
+  // totales en D3:E4 de "Entradas" (zona libre: no toca la tabla de ventas ni lo que escribe la web)
+  const hoja = ss.getSheetByName(HOJA);
+  hoja.getRange('D3:D4').setValues([['Entradas regaladas'], ['Total entregadas (vendidas + regaladas)']]).setFontWeight('bold');
+  hoja.getRange('E3').setFormula("=SUM(Invitaciones!C2:C)");
+  hoja.getRange('E4').setFormula('=B3+E3');
+}
