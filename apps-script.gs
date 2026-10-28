@@ -129,3 +129,27 @@ function invitacionesConEntregada() {
   hoja.getRange('C3').setValue('Regaladas entregadas');
   hoja.getRange('D3').setFormula('=SUMPRODUCT(Invitaciones!D5:D*Invitaciones!C5:C)+SUMPRODUCT(Invitaciones!J5:J*Invitaciones!I5:I)');
 }
+
+// Resumen arriba de Invitaciones: cupo para regalar, cuántas hay anotadas entre las dos tablas,
+// cuántas quedan y cuántas ya se entregaron. Agrega 6 filas arriba; las fórmulas existentes se corren solas.
+function totalInvitaciones() {
+  const inv = SpreadsheetApp.getActive().getSheetByName('Invitaciones');
+  if (inv.getRange('A1').getValue() === 'TOTAL INVITACIONES') return;   // ya está armado
+  inv.setFrozenRows(0);
+  inv.insertRowsBefore(1, 6);
+  // las tablas ahora empiezan en la fila 7: anotadas en la fila 8, entregadas en la 9
+  inv.getRange('A1').setValue('TOTAL INVITACIONES').setFontWeight('bold').setFontSize(12);
+  inv.getRange('A2:A5').setValues([['Cupo para regalar'], ['Anotadas (estimado)'], ['Quedan para anotar'], ['Entregadas']])
+    .setFontWeight('bold');
+  inv.getRange('C2').setValue(80).setBackground('#fff6cc');
+  inv.getRange('C3').setFormula('=C8+I8');
+  inv.getRange('C4').setFormula('=C2-C3');
+  inv.getRange('C5').setFormula('=C9+I9');
+  inv.getRange('C2:C5').setFontWeight('bold');
+  inv.getRange('A1:E5').setBorder(true, true, true, true, false, false, '#bbbbbb', SpreadsheetApp.BorderStyle.SOLID);
+  const reglas = inv.getConditionalFormatRules();
+  reglas.push(SpreadsheetApp.newConditionalFormatRule().whenNumberLessThan(0)
+    .setFontColor('#d93025').setRanges([inv.getRange('C4')]).build());
+  inv.setConditionalFormatRules(reglas);
+  inv.setFrozenRows(10);
+}
